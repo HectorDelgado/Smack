@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14868" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina5_5" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14824"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Reveal View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="SWRevealViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                    </view>
+                    <connections>
+                        <segue destination="a3h-7V-VCe" kind="custom" identifier="sw_rear" customClass="SWRevealViewControllerSegueSetController" id="NfC-nJ-HqR"/>
+                        <segue destination="HMx-ri-fAR" kind="custom" identifier="sw_front" customClass="SWRevealViewControllerSegueSetController" id="mOL-dw-pKn"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="139" y="138"/>
+        </scene>
+        <!--ChannelVC-->
+        <scene sceneID="mmi-cv-yqv">
+            <objects>
+                <viewController id="a3h-7V-VCe" customClass="ChannelVC" customModule="_1_Smack" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="6c3-ro-3vC">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="aeu-RY-DHf"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Iar-vL-EXC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1093" y="-278"/>
+        </scene>
+        <!--ChatVC-->
+        <scene sceneID="rSV-6F-ItK">
+            <objects>
+                <viewController id="HMx-ri-fAR" customClass="ChatVC" customModule="_1_Smack" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="GWx-nj-b8K">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4dk-He-KDD">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="77"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FTI-Hc-Cfa">
+                                        <rect key="frame" x="12" y="47" width="24" height="18"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="18" id="Wj7-SG-Uwo"/>
+                                            <constraint firstAttribute="width" constant="24" id="tZC-Mx-FdT"/>
+                                        </constraints>
+                                        <state key="normal" image="smackBurger"/>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Smack" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sNP-J2-VdG">
+                                        <rect key="frame" x="182" y="44" width="50" height="24"/>
+                                        <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="17"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.28235294117647058" green="0.30196078431372547" blue="0.84705882352941175" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstItem="FTI-Hc-Cfa" firstAttribute="leading" secondItem="4dk-He-KDD" secondAttribute="leading" constant="12" id="9xZ-SO-CG0"/>
+                                    <constraint firstItem="sNP-J2-VdG" firstAttribute="centerY" secondItem="FTI-Hc-Cfa" secondAttribute="centerY" id="AOg-jF-gjF"/>
+                                    <constraint firstAttribute="bottom" secondItem="FTI-Hc-Cfa" secondAttribute="bottom" constant="12" id="Nh1-x7-gk1"/>
+                                    <constraint firstAttribute="height" constant="77" id="unh-gg-Gkc"/>
+                                    <constraint firstItem="sNP-J2-VdG" firstAttribute="centerX" secondItem="4dk-He-KDD" secondAttribute="centerX" id="wSN-AR-eb6"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="4dk-He-KDD" firstAttribute="leading" secondItem="AhD-Pm-4aJ" secondAttribute="leading" id="BDT-GJ-ebF"/>
+                            <constraint firstItem="4dk-He-KDD" firstAttribute="top" secondItem="AhD-Pm-4aJ" secondAttribute="top" id="M55-5w-AEv"/>
+                            <constraint firstItem="4dk-He-KDD" firstAttribute="trailing" secondItem="AhD-Pm-4aJ" secondAttribute="trailing" id="RTm-UH-goh"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="AhD-Pm-4aJ"/>
+                    </view>
+                    <connections>
+                        <outlet property="menuBtn" destination="FTI-Hc-Cfa" id="jsA-w5-5xb"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="MMt-iP-RXu" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1092.753623188406" y="576.35869565217399"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="smackBurger" width="40" height="40"/>
+    </resources>
+</document>
