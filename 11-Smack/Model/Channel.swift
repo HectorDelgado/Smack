@@ -5,6 +5,7 @@
 //  Created by Hector Delgado on 10/28/19.
 //  Copyright © 2019 hector delgado. All rights reserved.
 //
+//  Data model associated with a specific channel.
 
 import Foundation
 

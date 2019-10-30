@@ -5,6 +5,9 @@
 //  Created by Hector Delgado on 10/7/19.
 //  Copyright © 2019 hector delgado. All rights reserved.
 //
+//  Singleton service used for authenticating users.
+//  Uses AlamoFire to create the HTTP request and SwiftyJSON to parse the data that is returned.
+//
 
 import Foundation
 import Alamofire
@@ -47,34 +50,59 @@ class AuthService {
         }
     }
     
-    // Attempts to register a user into our database.
-    // Uses AlamoFire to create the HTTP Request which then passes the boolean result
-    // to the closure that was passed as a parameter.
+    // Used to construct the HTTP parameters to login an existing user
+    struct LoginUserParameters: Encodable {
+        let email: String
+        let password: String
+    }
+    
+    // Used to construct the HTTP parameters to create a new user
+    struct CreateUserParameters: Encodable {
+        let name: String
+        let email: String
+        let avatarName: String
+        let avatarColor: String
+    }
+    
+    /**
+     Attempts to register a user into the database.
+     Uses AlamoFire to create the HTTP request which then passes the boolean result to the closure that was passed as a parameter.
+     - Parameter email: The email the user entered when creating an account
+     - Parameter password: The password the user entered when creating an account
+     - Parameter completion: Closure that accepts the boolean result as its parameter (true for no errors, false when an error occured)
+     */
     func registerUser(email: String, password: String, completion: @escaping CompletionHandler) {
         let lowerCaseEmail = email.lowercased()
         let loginParameters = LoginUserParameters(email: lowerCaseEmail, password: password)
         
         AF.request(URL_REGISTER, method: .post, parameters: loginParameters, encoder: JSONParameterEncoder.default, headers: HEADER).responseString { (mResponse) in
-            switch mResponse.result {
-            case .success:
-                print("User Registered")
+            if mResponse.error == nil {
+                print("User registered")
                 completion(true)
-            case let .failure(error):
+            } else {
                 completion(false)
-                print(error)
+                print("Error occured in registering user")
+                print(mResponse.error.debugDescription)
             }
         }
     }
     
-    // Attempts to authenticate a user into our database.
-    // Uses AlamoFire to create the HTTP request and if successful updates the locally stored user email and auth token
-    // then passes the boolean result to the closure that was passed as a parameter.
+    /**
+     Attempts to authenticate a user into the database.
+     Uses AlamoFire to create the HTTP request and passes the boolean result to the closure that was passed as a parameter.
+     If successful it stores the users email and auth token locally.
+     - Parameter email: The email the user entered to login
+     - Parameter password: The password the userd entered to login
+     - Parameter completion: Closure that accepts the boolean result as its parameter (true for no errors, false when an error occured)
+     */
     func loginUser(email: String, password: String, completion: @escaping CompletionHandler) {
         let lowerCaseEmail = email.lowercased()
         let loginParameters = LoginUserParameters(email: lowerCaseEmail, password: password)
         
-        AF.request(URL_LOGIN, method: .post, parameters: loginParameters, encoder: JSONParameterEncoder.default, headers: HEADER).responseJSON { (mResponse) in
+        AF.request(URL_LOGIN, method: .post, parameters: loginParameters, encoder: JSONParameterEncoder.default, headers: HEADER).responseString { (mResponse) in
             if mResponse.error == nil {
+                print("no errors ")
+                print(mResponse.data as Any)
                 do {
                     guard let data = mResponse.data else { return }
                     let json = try JSON(data: data)
@@ -84,16 +112,26 @@ class AuthService {
                     completion(true)
                 } catch {
                     completion(false)
+                    print("Error parsing JSON Data")
                     print(error.localizedDescription)
                 }
             } else {
+                print("errors in response")
                 print("\(String(describing: mResponse.error?.errorDescription!))")
+                completion(false)
             }
         }
     }
-    
-    // Attempts to create a new user into our database.
-    // Uses AlamoFire to create the HTTP request and sets all the users info.
+
+    /**
+     Attempts to create a new user into the database.
+     Uses AlamoFire to create the HTTP request and passes the boolean result to the closure that was passed as a parameter.
+     - Parameter name: The username the user entered to create an account.
+     - Parameter email: The email the user entered to create an account.
+     - Parameter avatarName: The name of the image the user selected as an avatar.
+     - Parameter avatarColor: The color the user selected for their avatar.
+     - Parameter completion: Closure that accepts the boolean result as its parameter (true for no errors, false when an error occured)
+     */
     func createUser(name: String, email: String, avatarName: String, avatarColor: String, completion: @escaping CompletionHandler) {
         let lowerCaseEmail = email.lowercased()
         let loginParameters = CreateUserParameters(name: name, email: lowerCaseEmail, avatarName: avatarName, avatarColor: avatarColor)
@@ -111,6 +149,10 @@ class AuthService {
         }
     }
     
+    /**
+     Attempts to gather a users info based on their email.
+     - Parameter completion: Closure that accepts the boolean result as its parameter (true for no errors, false when an error occured)
+     */
     func findUserEmail(completion: @escaping CompletionHandler) {
         let url = "\(URL_USER_BY_EMAIL)\(userEmail)"
         
@@ -129,6 +171,9 @@ class AuthService {
         }
     }
     
+    /**
+     Parses the data passed in to retrieve the users info and store it locally.
+     */
     func setUserInfo(data: Data) {
         do {
             let json = try JSON(data: data)
@@ -142,17 +187,5 @@ class AuthService {
         } catch {
             print(error.localizedDescription)
         }
-    }
-    
-    struct LoginUserParameters: Encodable {
-        let email: String
-        let password: String
-    }
-    
-    struct CreateUserParameters: Encodable {
-        let name: String
-        let email: String
-        let avatarName: String
-        let avatarColor: String
     }
 }

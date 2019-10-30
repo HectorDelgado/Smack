@@ -39,10 +39,10 @@ let TOKEN_KEY = "token"
 let LOGGED_IN_KEY = "loggedIn"
 let USER_EMAIL = "userEmail"
 
+// HTTP Headers
 let HEADER: HTTPHeaders = [
     "Content-Type": "application/json; charset=utf-8"
 ]
-
 let BEARER_HEADER: HTTPHeaders = [
     "Authorization":"Bearer \(AuthService.instance.authToken)",
     "Content-Type":"application/json; charset=utf-8"

@@ -5,6 +5,7 @@
 //  Created by Hector Delgado on 10/28/19.
 //  Copyright © 2019 hector delgado. All rights reserved.
 //
+//  Custom UITableViewCell that is used to display a Channel.
 
 import UIKit
 
@@ -38,8 +39,5 @@ class ChannelCell: UITableViewCell {
                 channelLbl.font = UIFont(name: "HelveticaNeue-Bold", size: 22)
             }
         }
-        
-        
     }
-
 }

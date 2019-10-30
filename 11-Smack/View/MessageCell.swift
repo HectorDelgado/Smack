@@ -5,6 +5,7 @@
 //  Created by Hector Delgado on 10/29/19.
 //  Copyright © 2019 hector delgado. All rights reserved.
 //
+//  Custom UITableViewCell used to display each message in the ChatVC.
 
 import UIKit
 

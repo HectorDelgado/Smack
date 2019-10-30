@@ -24,6 +24,30 @@ class AvatarPickerVC: UIViewController, UICollectionViewDelegate, UICollectionVi
         collectionView.dataSource = self
     }
     
+    /**
+     Dismisses the current view controller.
+     */
+    @IBAction func backPressed(_ sender: Any) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    /**
+     Updates the TableView to display dark or light avatars.
+     */
+    @IBAction func segmentControlChanged(_ sender: Any) {
+        switch segmentedControl.selectedSegmentIndex {
+        case 0:
+            avatarType = AvatarType.dark
+        default:
+            avatarType = AvatarType.light
+        }
+        
+        collectionView.reloadData()
+    }
+    
+    /**
+     Sets the cell in the TableView to be of type AvatarCell.
+     */
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "avatarCell", for: indexPath) as? AvatarCell {
             cell.configureCell(index: indexPath.item, type: avatarType)
@@ -32,14 +56,23 @@ class AvatarPickerVC: UIViewController, UICollectionViewDelegate, UICollectionVi
         return UICollectionViewCell()
     }
     
+    /**
+     Sets the number of sections in the Tableview
+     */
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
     
+    /**
+     Sets the number of items in the section (hardcoded to 28 because we have exactly 28 avatar images to choose from)
+     */
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 28
     }
     
+    /**
+     Sets the TableView to display 3 or 4 columns based on the size of the display.
+     */
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         var numOfColumns: CGFloat = 3
         
@@ -54,6 +87,9 @@ class AvatarPickerVC: UIViewController, UICollectionViewDelegate, UICollectionVi
         return CGSize(width: cellDimension, height: cellDimension)
     }
     
+    /**
+     Stores the name of the avatar the user selected and dismisses the current view controller.
+     */
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if avatarType == .dark {
             UserDataService.instance.setAvatarName(avatarName: "dark\(indexPath.item)")
@@ -64,20 +100,7 @@ class AvatarPickerVC: UIViewController, UICollectionViewDelegate, UICollectionVi
         dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func backPressed(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
-    }
     
-    @IBAction func segmentControlChanged(_ sender: Any) {
-        switch segmentedControl.selectedSegmentIndex {
-        case 0:
-            avatarType = AvatarType.dark
-        default:
-            avatarType = AvatarType.light
-        }
-        
-        collectionView.reloadData()
-    }
     
 
 }

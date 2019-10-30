@@ -5,6 +5,8 @@
 //  Created by Hector Delgado on 10/28/19.
 //  Copyright © 2019 hector delgado. All rights reserved.
 //
+//  Singleton service that acts as a socket to listen/transmit channels and messages to/from the server.
+//
 
 import UIKit
 import SocketIO
@@ -30,17 +32,23 @@ class SocketService: NSObject {
         socket.disconnect()
     }
     
+    /**
+     Creates a new channel on the server by emitting the 'newChannel' event.
+     - Parameter channelName: Name of the channel to create.
+     - Parameter channelDescription: Description for the channel to be created.
+     - Parameter completion: Closure that accepts a boolean as its parameter (true for success)
+     */
     func addChannel(channelName: String, channelDescription: String, completion: @escaping CompletionHandler) {
         socket.emit("newChannel", channelName, channelDescription)
-        print("Connection Status when adding channel: \(socket.status.active)")
         completion(true)
     }
     
+    /**
+     Retrieves any new channels created on the server by listening for the 'channelCreated' event and adds it to the channels array.
+     - Parameter completion: Closure that accepts a boolean as its parameter (true for success)
+     */
     func getChannel(completion: @escaping CompletionHandler) {
-        
         socket.on("channelCreated") { (dataReceived, ack) in
-            
-            print("Attempting to get channel info")
             guard let channelId = dataReceived[2] as? String else { return }
             guard let channelName = dataReceived[0] as? String else { return }
             guard let channelDesc = dataReceived[1] as? String else { return }
@@ -53,12 +61,23 @@ class SocketService: NSObject {
         }
     }
     
+    /**
+     Creates a new message on the server by emitting a 'newMessage' event.
+     - Parameter messageBody: Body of the message to send.
+     - Parameter userID: Unique identifier associated with the user who is sending the message.
+     - Parameter channelID: Unique identifier associated with the channel where the message was sent from.
+     - Parameter completion: Closure that accepts a boolean as its parameter (true for success)
+     */
     func addMessage(messageBody: String, userID: String, channelID: String, completion: @escaping CompletionHandler) {
         let user =  UserDataService.instance
         socket.emit("newMessage", messageBody, userID, channelID, user.name, user.avatarName, user.avatarColor)
         completion(true)
     }
     
+    /**
+     Retrieves any new messages created on the server by listening for the 'messageCreated' event.
+     - Parameter completion: Closure that accepts the new Message as its parameter.
+     */
     func getChatMessage(completion: @escaping (_ newMessage: Message) -> Void) {
         socket.on("messageCreated") { (dataReceived, ack) in
             guard let msgBody = dataReceived[0] as? String else { return }
@@ -75,6 +94,10 @@ class SocketService: NSObject {
         }
     }
     
+    /**
+     Retrieves a dictionary of the  users that is currently typing in the current channel.
+     - Parameter completionHandler: Closure that accepts the Dictionary associated with the typing users.
+     */
     func getTypingUsers(_ completionHandler: @escaping (_ typingUser: [String: String]) -> Void) {
         socket.on("userTypingUpdate") { (dataReceived, ack) in
             guard let typingUsers = dataReceived[0] as? [String: String] else { return }

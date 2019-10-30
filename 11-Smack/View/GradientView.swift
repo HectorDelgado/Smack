@@ -5,6 +5,7 @@
 //  Created by Hector Delgado on 10/4/19.
 //  Copyright © 2019 hector delgado. All rights reserved.
 //
+//  Custom UIView that can be used as a background gradient.
 
 import UIKit
 

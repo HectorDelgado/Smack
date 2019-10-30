@@ -20,7 +20,6 @@ class CreateAccountVC: UIViewController {
     var avatarName = "defaultUser"
     var avatarColor = "[0.5, 0.5, 0.5, 1]"
     var bgColor : UIColor?
-    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,6 +27,9 @@ class CreateAccountVC: UIViewController {
         setupView()
     }
     
+    /**
+     Sets the avatar image if they have returned from the AvatarPickerVC and chosen an avatar.
+     */
     override func viewDidAppear(_ animated: Bool) {
         if UserDataService.instance.avatarName != "" {
             userImg.image = UIImage(named: UserDataService.instance.avatarName)
@@ -39,6 +41,9 @@ class CreateAccountVC: UIViewController {
         }
     }
     
+    /**
+     Initializes the states of various views and adds a tap gesture recognizer.
+     */
     func setupView() {
         activitySpinner.isHidden = true
         
@@ -50,18 +55,30 @@ class CreateAccountVC: UIViewController {
         view.addGestureRecognizer(tap)
     }
     
+    /**
+     Handles tap events.
+     */
     @objc func handlTap() {
         view.endEditing(true)
     }
     
+    /**
+     Performs an unwind segue when the user pressed the close button.
+     */
     @IBAction func closePressed(_ sender: Any) {
         performSegue(withIdentifier: UNWIND, sender: nil)
     }
     
+    /**
+     Performs a segue to the AvatarPickerVC.
+     */
     @IBAction func chooseAvatarPressed(_ sender: Any) {
         performSegue(withIdentifier: TO_AVATAR_PICKER, sender: nil)
     }
     
+    /**
+     Generates and sets a random UIColor for the userImg background.
+     */
     @IBAction func generateBGColorPressed(_ sender: Any) {
         let r = CGFloat(arc4random_uniform(255)) / 255
         let g = CGFloat(arc4random_uniform(255)) / 255
@@ -73,24 +90,32 @@ class CreateAccountVC: UIViewController {
         UIView.animate(withDuration: 0.2) {
             self.userImg.backgroundColor = self.bgColor
         }
-        
     }
     
+    /**
+     Attempts to register, login, and create a new user with the specified username, email, and password.
+     */
     @IBAction func createAccountPressed(_ sender: Any) {
         activitySpinner.isHidden = false
         activitySpinner.startAnimating()
+        
         guard let username = usernameField.text , emailField.text != "" else { return }
         guard let email = emailField.text , emailField.text != "" else { return }
         guard let pass = passwordField.text, passwordField.text != "" else { return }
         
-        AuthService.instance.registerUser(email: email, password: pass) { (isSuccess) in
-            if isSuccess {
+        // Attempts to register the user
+        AuthService.instance.registerUser(email: email, password: pass) { (isRegistered) in
+            if isRegistered {
                 print("Registered user!")
-                AuthService.instance.loginUser(email: email, password: pass) { (isSuccess) in
-                    if isSuccess {
+                
+                // Attempts to login the newly created user
+                AuthService.instance.loginUser(email: email, password: pass) { (isLoggedIn) in
+                    if isLoggedIn {
                         print("logged in user!", AuthService.instance.authToken)
-                        AuthService.instance.createUser(name: username, email: email, avatarName: self.avatarName, avatarColor: self.avatarColor) { (isSuccess) in
-                            if (isSuccess) {
+                        
+                        // Attempts to create a new user with the new info.
+                        AuthService.instance.createUser(name: username, email: email, avatarName: self.avatarName, avatarColor: self.avatarColor) { (userCreated) in
+                            if (userCreated) {
                                 print("Created new user!")
                                 self.activitySpinner.isHidden = true
                                 self.activitySpinner.stopAnimating()
@@ -104,5 +129,4 @@ class CreateAccountVC: UIViewController {
             }
         }
     }
-    
 }

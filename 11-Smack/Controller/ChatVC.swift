@@ -22,6 +22,14 @@ class ChatVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if AuthService.instance.isLoggedIn {
+            messageTextField.isEnabled = false
+            messageTextField.isHidden = true
+        } else {
+            messageTextField.isEnabled = true
+            messageTextField.isHidden = false
+        }
+        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.estimatedRowHeight = 80
@@ -30,17 +38,20 @@ class ChatVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         sendBtn.isHidden = true
         typingUsersLbl.text = ""
         
-        view.bindToKeyboard()
         let tap = UITapGestureRecognizer(target: self, action: #selector(ChatVC.handleTap))
         view.addGestureRecognizer(tap)
+        view.bindToKeyboard()
 
         menuBtn.addTarget(self.revealViewController(), action: #selector(SWRevealViewController.revealToggle(_:)), for: .touchUpInside)
         self.view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
         self.view.addGestureRecognizer(self.revealViewController().tapGestureRecognizer())
         
+        // Listens for notifications
         NotificationCenter.default.addObserver(self, selector: #selector(ChatVC.userDataDidChange(_:)), name: NOTIF_USER_DATA_DID_CHANGE, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(ChatVC.channelSelected(_:)), name: NOTIF_CHANNEL_SELECTED, object: nil)
         
+        // Listens for new messages from the server and updates the TableView of messages
+        // if the user is on the specified channel and is logged in.
         SocketService.instance.getChatMessage { (newMessage) in
             if newMessage.channelID == MessageService.instance.selectedChannel?.channelID && AuthService.instance.isLoggedIn {
                 MessageService.instance.messages.append(newMessage)
@@ -53,6 +64,7 @@ class ChatVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             }
         }
         
+        // Listens for users typing on the current channel and notifies the current user whos is typing.
         SocketService.instance.getTypingUsers { (typingUsersDictionary) in
             guard let channelID = MessageService.instance.selectedChannel?.channelID else { return }
             var names = ""
@@ -81,6 +93,7 @@ class ChatVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             }
         }
         
+        // Sends a notification if the user is logged in.
         if AuthService.instance.isLoggedIn {
             AuthService.instance.findUserEmail { (success) in
                 NotificationCenter.default.post(name: NOTIF_USER_DATA_DID_CHANGE, object: nil)
@@ -88,6 +101,11 @@ class ChatVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    /**
+     Called when the users data has been updated.
+     Attempts to get any stored messages for the user.
+     - Parameters notif: Notification that triggered this method.
+     */
     @objc func userDataDidChange(_ notif: Notification) {
         if AuthService.instance.isLoggedIn {
             onLoginGetMessages()
@@ -97,20 +115,24 @@ class ChatVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    /**
+     Called when a channel has been selected.
+     - Parameters notif: Notification that triggered this method.
+     */
     @objc func channelSelected(_ notif: Notification) {
         updateWithChannel()
     }
     
+    /**
+     Called when a user taps out of the typing TextField.
+     */
     @objc func handleTap() {
         view.endEditing(true)
     }
     
-    func updateWithChannel() {
-        let channelName = MessageService.instance.selectedChannel?.channelName ?? ""
-        channelNameLbl.text = "\(channelName)"
-        getMessages()
-    }
-    
+    /**
+     Used to emit 'stopType' and 'startType' events to the server to alert other users on the same channel people are currently typing.
+     */
     @IBAction func messageBoxEditing(_ sender: Any) {
         guard let channelId = MessageService.instance.selectedChannel?.channelID else { return }
         if messageTextField.text == "" {
@@ -126,6 +148,9 @@ class ChatVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    /**
+     Sends a message to the server on the current channel.
+     */
     @IBAction func sendMessagePressed(_ sender: Any) {
         if AuthService.instance.isLoggedIn {
             guard let channelID = MessageService.instance.selectedChannel?.channelID else { return }
@@ -141,6 +166,18 @@ class ChatVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    /**
+     Updates the selected Channel to display the current channel name and list of messages.
+     */
+    func updateWithChannel() {
+        let channelName = MessageService.instance.selectedChannel?.channelName ?? ""
+        channelNameLbl.text = "#\(channelName)"
+        getMessages()
+    }
+    
+    /**
+     Attempts to retrieve all stored messages for the current user from the server.
+     */
     func onLoginGetMessages() {
         MessageService.instance.findAllChannels { (success) in
             if success {
@@ -154,6 +191,9 @@ class ChatVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    /**
+     Retrieves all messages for the specified channel.
+     */
     func getMessages() {
         guard let channelID = MessageService.instance.selectedChannel?.channelID else { return }
         MessageService.instance.findAllMessagesForChannel(channelID: channelID) { (success) in
@@ -163,6 +203,9 @@ class ChatVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    /**
+     Sets the custom cell for the TableView.
+     */
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "messageCell", for: indexPath) as? MessageCell {
             let message = MessageService.instance.messages[indexPath.row]
@@ -173,10 +216,16 @@ class ChatVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    /**
+     Sets the number of sections.
+     */
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
+    /**
+     Sets the number of rows in each section.
+     */
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return MessageService.instance.messages.count
     }

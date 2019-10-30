@@ -24,9 +24,11 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
         self.revealViewController()?.rearViewRevealWidth = self.view.frame.size.width - 60
         
+        // Listens for notifications
         NotificationCenter.default.addObserver(self, selector: #selector(ChannelVC.userDataDidChange(_:)), name: NOTIF_USER_DATA_DID_CHANGE, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(ChannelVC.channelsLoaded(_:)), name: NOTIF_CHANNELS_LOADED, object: nil)
         
+        // Attempts to retrieve the information for the current channel.
         SocketService.instance.getChannel { (success) in
             if success {
                 self.tableView.reloadData()
@@ -40,23 +42,27 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
                 self.tableView.reloadData()
             }
         }
-        
-        print("Calling viewDidload")
     }
     
     override func viewDidAppear(_ animated: Bool) {
         setupUserInfo()
     }
     
+    /**
+     Displays the AddChannelVC modally to let the user create a new channel if they are logged in.
+     */
     @IBAction func addChannelPressed(_ sender: Any) {
         if AuthService.instance.isLoggedIn {
             let addChannel = AddChannelVC()
             addChannel.modalPresentationStyle = .fullScreen
             present(addChannel, animated: true, completion: nil)
         }
-        
     }
     
+    /**
+     If the user is logged in, the ProfileVC is displayed showing their basic info.
+     Otherwise a segue is performed to allow the user to login or create a new account.
+     */
     @IBAction func loginBtnPressed(_ sender: Any) {
         if AuthService.instance.isLoggedIn {
             let profile = ProfileVC()
@@ -67,17 +73,26 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
-    
-    
+    /**
+     Called when a users data has changed.
+     - Parameter notif: The notification that triggered this method call.
+     */
     @objc func userDataDidChange(_ notif: Notification) {
-        print("Some user data changed!")
         setupUserInfo()
     }
     
+    /**
+     Called when new channels are detected.
+     - Parameter notif: The notification that triggered this method call.
+     */
     @objc func channelsLoaded(_ notif: Notification) {
         tableView.reloadData()
     }
     
+    /**
+     If the user is logged in, their avatar is displayed,
+     otherwise a blank avatar is displayed.
+     */
     func setupUserInfo() {
         if AuthService.instance.isLoggedIn {
             print("User loggin in. updating ui")
@@ -93,14 +108,23 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    /**
+     Sets the number of sections.
+     */
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
+    /**
+     Sets the number of rows in the section.
+     */
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return MessageService.instance.channels.count
     }
     
+    /**
+     Sets the custom ChannelCell to be displayed in the TableView.
+     */
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: "channelCell", for: indexPath) as? ChannelCell {
             let mChannel = MessageService.instance.channels[indexPath.row]
@@ -111,6 +135,9 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         }
     }
     
+    /**
+     Toggles the current view controller to hide.
+     */
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let channel = MessageService.instance.channels[indexPath.row]
         MessageService.instance.selectedChannel = channel
@@ -127,7 +154,4 @@ class ChannelVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         
         self.revealViewController()?.revealToggle(animated: true)
     }
-    
-    
-    
 }

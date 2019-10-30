@@ -5,6 +5,7 @@
 //  Created by Hector Delgado on 10/7/19.
 //  Copyright © 2019 hector delgado. All rights reserved.
 //
+//  Custom UIButton that acts as a rounded button.
 
 import UIKit
 

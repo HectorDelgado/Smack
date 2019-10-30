@@ -5,6 +5,7 @@
 //  Created by Hector Delgado on 10/10/19.
 //  Copyright © 2019 hector delgado. All rights reserved.
 //
+//  Custom UIImageView that creates a circular image.
 
 import UIKit
 

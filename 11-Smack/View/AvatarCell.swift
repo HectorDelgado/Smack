@@ -5,6 +5,7 @@
 //  Created by Hector Delgado on 10/8/19.
 //  Copyright © 2019 hector delgado. All rights reserved.
 //
+//  Custom UICollectionViewCell that holds a users avatar.
 
 import UIKit
 

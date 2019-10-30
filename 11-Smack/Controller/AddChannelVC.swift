@@ -21,10 +21,16 @@ class AddChannelVC: UIViewController {
         setupView()
     }
 
+    /**
+     Dismisses the current view controller.
+     */
     @IBAction func closeModalPressed(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
     
+    /**
+     Attempts to create a new channel on the server.
+     */
     @IBAction func createChannelPressed(_ sender: Any) {
         guard let channelName = nameTextField.text , nameTextField.text != "" else { return }
         guard let channelDesc = descriptionTextField.text else { return }
@@ -35,11 +41,13 @@ class AddChannelVC: UIViewController {
                 print("Channel added")
             } else {
                 print("Error creating channel")
-                
             }
         }
     }
     
+    /**
+     Initializes the states of various views and adds a tap gesture recognizer.
+     */
     func setupView() {
         let closeTouch = UITapGestureRecognizer(target: self, action: #selector(AddChannelVC.closeTap(_:)))
         bgView.addGestureRecognizer(closeTouch)
@@ -48,6 +56,9 @@ class AddChannelVC: UIViewController {
         descriptionTextField.attributedPlaceholder = NSAttributedString(string: "description", attributes: [NSAttributedString.Key.foregroundColor : PLACEHOLDER_PURPLE])
     }
     
+    /**
+     Dismisses the current view controller.
+     */
     @objc func closeTap(_ recognizer: UITapGestureRecognizer) {
         dismiss(animated: true, completion: nil)
     }

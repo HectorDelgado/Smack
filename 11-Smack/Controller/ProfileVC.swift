@@ -21,17 +21,25 @@ class ProfileVC: UIViewController {
         setupView()
     }
     
-    
+    /**
+     Dismisses the current view controller.
+     */
     @IBAction func closeModalPressed(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
     
+    /**
+     Logs the user out and dismisses the current view controller.
+     */
     @IBAction func logoutPressed(_ sender: Any) {
         UserDataService.instance.logoutUser()
         NotificationCenter.default.post(name: NOTIF_USER_DATA_DID_CHANGE, object: nil)
         dismiss(animated: true, completion: nil)
     }
     
+    /**
+     Initializes the states of various views and adds a tap gesture recognizer.
+     */
     func setupView() {
         profileImg.image = UIImage(named: UserDataService.instance.avatarName)
         profileImg.backgroundColor = UserDataService.instance.returnUIColor(components: UserDataService.instance.avatarColor)
@@ -40,9 +48,11 @@ class ProfileVC: UIViewController {
         
         let closeTouch = UITapGestureRecognizer(target: self, action: #selector(closeTap(_:)))
         bgView.addGestureRecognizer(closeTouch)
-        
     }
     
+    /**
+     Dismisses the current view controller.
+     */
     @objc func closeTap(_ recognizer: UITapGestureRecognizer) {
         dismiss(animated: true, completion: nil)
     }

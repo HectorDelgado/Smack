@@ -19,10 +19,17 @@ class LoginVC: UIViewController {
         setupView()
     }
     
+    /**
+     Dismisses the current view controller.
+     */
     @IBAction func closePressed(_ sender: Any) {
         dismiss(animated: true, completion: nil)
     }
     
+    /**
+     Attempts to login a user using the email/password entered.
+     A notification is sent if they successfully login.
+     */
     @IBAction func loginBtnPressed(_ sender: Any) {
         spinner.isHidden = false
         spinner.startAnimating()
@@ -46,10 +53,17 @@ class LoginVC: UIViewController {
             }
         }
     }
+    
+    /**
+     Performs a segue to the CreateAccountVC.
+     */
     @IBAction func createAccountBtnPressed(_ sender: Any) {
         performSegue(withIdentifier: TO_CREATE_ACCOUNT, sender: nil)
     }
     
+    /**
+     Sets up the basic state of various views.
+     */
     func setupView() {
         spinner.isHidden = true
         emailTextField.attributedPlaceholder = NSAttributedString(string: "email", attributes: [NSAttributedString.Key.foregroundColor: PLACEHOLDER_PURPLE])
